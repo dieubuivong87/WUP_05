@@ -17,29 +17,78 @@ triUmp <-read.csv(file="triUmpsal.csv",header=TRUE)
 
 A new  preventative aides drug (triUmpsal) is under test in clinical trials. Consider only the DrugUsers, does this drug seem effective?  Hint - use dplyr to obtain that subpopulation with the filter command.
 
+
+```{r}
+library(dplyr)
+druggies = filter(triUmp, triUmp$DrugUser=='yes')
+```
+$H_0$ The drug will not be effective in preventing Aids in drug usera.
+
+$H_A$ The drug will be effective in preventing Aids in drug users
+
+
+
 # Methods
 
 <!--Decide on your methods:  use "variable analysis" or other appropriate descriptors.  Make sure to choose at least one graphical method and at least one numerical method. Discuss what data manipulations may be needed for example subsetting or other binning procedures and what sort of graphical displays and inferential tools will be used!-->
-
+ 
+ The respon variable is the infected baswdon the effectiveness of the new aids drug and the explanatory variable is categorical because of the drug users. Therefore we utilize the numrical~cats 
 # Results
 
 <!--Divide this section into two sub-sections:  One for your descriptive  results and one for your inferential results.!-->
 
 ## Descriptive Results
 
+
 ### Graphical Descriptive Results
 
 <!--Graphical results here.  Make sure to show your code.  Provide appropriate labels for axes, giving units if possible, and provide a good title for the graph, too.  Use the graphical results to describe the patterns if any that exist in the data as focused toward the research question. Bottom line is to explain the features of the graph that are relevant to conforming or departing to what is expected by your null hypothesis !-->
+
+
+
+```{r}
+barchartGC(~infected + treatment,data=druggies)
+barchartGC(~infected + treatment,data=druggies, type="percent")
+
+```
+
+This bar grapgh shows among the people who got aids , the folks that received the treatment vaccine had a significant reduction in catching aids. Compared to those thatreceived no vaccine, the percentage that causht aids is closer to 50%
 
 ### Numerical Descriptive Results
 
 <!--Numerical results go here. Use the numerical results to describe the patterns if any that exist in the data as focused toward the research question!-->
 
+
+```{r}
+table2 <- xtabs(~infected + treatment, data=druggies)
+rowPerc(table2)
+colPerc(table2)
+```
+
+The number in those who are infected with aids is higher among those who got the placebo. The people who got the vaccine are 3x less likely to develop aids against those who got the placebo.
+
 ## Inferential Results
 
 <!--State hypothesis clearly.  Make sure your discussion of the inferential test covers all the aspects that the test output produces, such as test statistic, p-value etc.  Make a decision about the null hypothesis, explain the assumptions on which the selected test/procedure was based, and why the chosen procedure satisfys the assumptions and is appropriate to answer the research question!-->
+
+```{r}
+chisq.test(table2)
+chisqtestGC(table2)
+```
+
+The P value is .0000001242 therefore we reject the null hypothesis
+
+```{r}
+druggies$infected=factor(druggies$infected,c('none','aids'))
+fisher.test(druggies$treatment,druggies$infected)
+```
+
+
+The P value is .0000000423. The vaccine is highly  effective . Odds ratio  is 2.3/1. You are almost three times morelikely to be protected from getting aids if you get the vaccine rather than a placebo.
 
 
 # Discussion and Conclusion
 
 <!--Discussion and conclusion here.  If you found a relationship be sure to consider whether the relationship occurs because one of the variavbles causes the other, or whether they perhasps are related for some other reason.  Watch the chapter 6 videos from the GeorgeTown videos collection.!-->
+
+Is the vaccine effective in preventing Aids? We did a Chisq test resulting in a P value less than .05. Therefore we reject null hypothesis.The vaccine is effective in preventing Aids. If you take the vaccine you are 2.8x more likely to not get Aids than someone who did not the vaccine.
